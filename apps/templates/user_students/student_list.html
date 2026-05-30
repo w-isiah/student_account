@@ -1,0 +1,399 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Student Directory{% endblock %}
+
+{% block content %}
+
+<div class="content-wrapper">
+
+    <!-- HEADER & STATS -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row align-items-center mb-3">
+                <div class="col-md-6">
+                    <h1 class="m-0 text-dark font-weight-bold">
+                        <i class="fas fa-user-graduate mr-2 text-primary"></i>
+                        Student Directory
+                    </h1>
+                </div>
+                <div class="col-md-6 text-right">
+                    <div class="d-inline-block mr-2">
+                        <div class="input-group input-group-sm" style="width:250px">
+                            <input type="text" id="tableSearch" class="form-control" placeholder="Search students...">
+                            <div class="input-group-append">
+                                <span class="input-group-text bg-white"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm shadow-sm font-weight-bold" data-toggle="modal" data-target="#addStudentModal">
+                        <i class="fas fa-user-plus mr-1"></i> New Student
+                    </button>
+                </div>
+            </div>
+
+            <!-- QUICK STATS CARDS -->
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="info-box shadow-sm">
+                        <span class="info-box-icon bg-primary"><i class="fas fa-users"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text text-muted small uppercase">Total Students</span>
+                            <span class="info-box-number">{{ stats.total_students }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box shadow-sm">
+                        <span class="info-box-icon bg-success"><i class="fas fa-check-circle"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text text-muted small uppercase">Active Accounts</span>
+                            <span class="info-box-number">{{ stats.active_count }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box shadow-sm">
+                        <span class="info-box-icon bg-info"><i class="fas fa-venus"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text text-muted small uppercase">Female</span>
+                            <span class="info-box-number">{{ stats.female_count }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box shadow-sm">
+                        <span class="info-box-icon bg-warning"><i class="fas fa-mars"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text text-muted small uppercase">Male</span>
+                            <span class="info-box-number">{{ stats.male_count }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="card card-outline card-primary shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="studentTable">
+                            <thead class="bg-light text-uppercase small text-muted">
+                                <tr>
+                                    <th>Reg. No</th>
+                                    <th>Student Name</th>
+                                    <th>Email</th>
+                                    <th>Gender</th>
+                                     <th class="text-center">Next of kin</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-right pr-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in students %}
+                                <tr>
+                                    <td><span class="badge badge-light border">#{{ item.reg_no }}</span></td>
+                                    <td>
+                                        <div class="font-weight-bold text-dark">
+                                            {{ item.first_name }} {{ item.last_name }}
+                                        </div>
+                                        <small class="text-muted">{{ item.other_name or '' }}</small>
+                                    </td>
+                                    <td>{{ item.email or 'N/A' }}</td>
+                                    <td>{{ item.gender }}</td>
+
+                                    <td class="text-right pr-4">
+    <!-- Next of Kin Management Button -->
+    <button class="btn btn-xs btn-info shadow-sm" 
+            data-toggle="modal" 
+            data-target="#nokModal{{ item.id }}" 
+            title="Manage Next of Kin">
+        <i class="fas fa-users-cog"></i>
+    </button>
+
+    
+</td>
+
+
+                                    <td class="text-center">
+                                        <span class="badge px-3 {% if item.account_status == 'Active' %}badge-success{% elif item.account_status == 'Suspended' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                            {{ item.account_status }}
+                                        </span>
+                                    </td>
+                                    <td class="text-right pr-4">
+                                        <button class="btn btn-xs btn-info shadow-sm" data-toggle="modal" data-target="#editModal{{ item.id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-xs btn-danger shadow-sm" data-toggle="modal" data-target="#deleteModal{{ item.id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- ADD STUDENT MODAL -->
+<div class="modal fade" id="addStudentModal">
+    <div class="modal-dialog">
+        <form action="{{ url_for('students_blueprint.add_student') }}" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title font-weight-bold">
+                        <i class="fas fa-user-plus mr-2"></i>Register New Student
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- REG NO: USED AS USERNAME AND PASSWORD -->
+                    <div class="form-group mb-3 p-3 bg-light border rounded">
+                        <label class="small font-weight-bold text-primary">
+                            REGISTRATION NUMBER (USERNAME & PASSWORD)
+                        </label>
+                        <input class="form-control form-control-lg border-primary" 
+                               name="reg_no" 
+                               placeholder="e.g. STU/2026/0001" 
+                               style="text-transform: uppercase;"
+                               required>
+                        <small class="text-muted">This will be the student's initial password.</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">FIRST NAME</label>
+                            <input class="form-control" name="first_name" placeholder="John" required>
+                        </div>
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">LAST NAME</label>
+                            <input class="form-control" name="last_name" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label class="small font-weight-bold">OTHER NAMES (Optional)</label>
+                        <input class="form-control" name="other_name" placeholder="Middle Name">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 form-group mb-2">
+                            <label class="small font-weight-bold">EMAIL ADDRESS</label>
+                            <input type="email" class="form-control" name="email" placeholder="student@example.com">
+                        </div>
+                        <div class="col-md-5 form-group mb-2">
+                            <label class="small font-weight-bold">GENDER</label>
+                            <select class="form-control" name="gender" required>
+                                <option value="" disabled selected>Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECURITY NOTICE -->
+                    <div class="alert alert-warning border-0 mt-3 mb-0 shadow-sm">
+                        <div class="d-flex">
+                            <i class="fas fa-shield-alt fa-2x mr-3 opacity-7"></i>
+                            <div>
+                                <h6 class="font-weight-bold mb-1">Credential Assignment</h6>
+                                <p class="small mb-0">
+                                    By default, the student will log in using their <strong>Registration Number</strong> as both the username and the password.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-4 font-weight-bold">
+                        <i class="fas fa-check mr-1"></i> Create Account
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- EDIT + DELETE MODALS -->
+{% for item in students %}
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editModal{{ item.id }}">
+    <div class="modal-dialog">
+        <form action="{{ url_for('students_blueprint.edit_student', student_id=item.id) }}" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title font-weight-bold">Update Account: {{ item.reg_no }}</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6 mb-2">
+                            <label class="small font-weight-bold">First Name</label>
+                            <input class="form-control" name="first_name" value="{{ item.first_name }}">
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label class="small font-weight-bold">Last Name</label>
+                            <input class="form-control" name="last_name" value="{{ item.last_name }}">
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="small font-weight-bold">Email</label>
+                        <input class="form-control" name="email" value="{{ item.email }}">
+                    </div>
+                    <div class="mb-2">
+                        <label class="small font-weight-bold">Account Status</label>
+                        <select class="form-control" name="account_status">
+                            {% for s in ['Active','Suspended','Alumni'] %}
+                            <option value="{{ s }}" {% if item.account_status == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light btn-sm" data-dismiss="modal">Close</button>
+                    <button class="btn btn-info btn-sm px-3">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+<!-- NEXT OF KIN MODALS -->
+{% for item in students %}
+<div class="modal fade" id="nokModal{{ item.id }}">
+    <div class="modal-dialog">
+        <form action="{{ url_for('students_blueprint.update_nok', student_id=item.id) }}" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="modal-content border-0 shadow-lg">
+                <!-- HEADER -->
+                <div class="modal-header bg-teal text-white" style="background-color: #17a2b8;">
+                    <h5 class="modal-title font-weight-bold">
+                        <i class="fas fa-heart mr-2"></i>Next of Kin: {{ item.first_name }} {{ item.last_name }}
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">Primary emergency contact details for registration number <strong>{{ item.reg_no }}</strong>.</p>
+                    
+                    <!-- FULL NAME -->
+                    <div class="form-group mb-2">
+                        <label class="small font-weight-bold">GUARDIAN / NOK FULL NAME</label>
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" class="form-control" name="nok_name" value="{{ item.nok_name or '' }}" placeholder="e.g. Mary Doe" required>
+                        </div>
+                    </div>
+
+                    <!-- RELATIONSHIP & PRIMARY PHONE -->
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">RELATIONSHIP</label>
+                            <select class="form-control form-control-sm" name="nok_relationship" required>
+                                <option value="" disabled {% if not item.nok_relationship %}selected{% endif %}>Select Relationship</option>
+                                {% for rel in ['Mother', 'Father', 'Guardian', 'Uncle', 'Aunt', 'Sibling', 'Other'] %}
+                                <option value="{{ rel }}" {% if item.nok_relationship == rel %}selected{% endif %}>{{ rel }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">PRIMARY PHONE</label>
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                </div>
+                                <input type="text" class="form-control" name="nok_phone" value="{{ item.nok_phone or '' }}" placeholder="e.g. +256..." required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECONDARY PHONE & EMAIL -->
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">BACKUP PHONE (Optional)</label>
+                            <input type="text" class="form-control form-control-sm" name="nok_phone_secondary" value="{{ item.nok_phone_secondary or '' }}" placeholder="Alternative number">
+                        </div>
+                        <div class="col-md-6 form-group mb-2">
+                            <label class="small font-weight-bold">EMAIL ADDRESS</label>
+                            <input type="email" class="form-control form-control-sm" name="nok_email" value="{{ item.nok_email or '' }}" placeholder="guardian@example.com">
+                        </div>
+                    </div>
+
+                    <!-- RESIDENTIAL ADDRESS -->
+                    <div class="form-group mb-0">
+                        <label class="small font-weight-bold">RESIDENTIAL ADDRESS / DIRECTION</label>
+                        <textarea class="form-control form-control-sm" name="nok_address" rows="2" placeholder="Home address or nearby landmarks...">{{ item.nok_address or '' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-light btn-sm border" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info btn-sm px-4 font-weight-bold shadow-sm">
+                        <i class="fas fa-save mr-1"></i> Save Contact Details
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+
+
+
+<!-- DELETE MODAL -->
+<div class="modal fade" id="deleteModal{{ item.id }}">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <form action="{{ url_for('students_blueprint.delete_student', student_id=item.id) }}" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <div class="modal-content text-center p-3">
+                <i class="fas fa-user-times text-danger fa-3x mb-2"></i>
+                <p class="mb-1">Permanently remove student</p>
+                <h6 class="font-weight-bold">{{ item.first_name }} {{ item.last_name }}?</h6>
+                <div class="mt-3">
+                    <button class="btn btn-light btn-sm mr-2" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger btn-sm">Confirm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script>
+$(document).ready(function () {
+    $("#tableSearch").on("keyup", function () {
+        let value = $(this).val().toLowerCase();
+        $("#studentTable tbody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    });
+});
+</script>
+{% endblock %}

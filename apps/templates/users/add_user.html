@@ -1,0 +1,199 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %} Add User - Advanced Form {% endblock %}
+
+{% block body_class %} admin_sidebar-mini {% endblock body_class %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" href="/static/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/select2/css/select2.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+<link rel="stylesheet" href="/static/assets/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+<link rel="stylesheet" href="/static/assets/css/mine.css">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="content-wrapper">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-12">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert-container">
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Add User</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url_for('main.index')}}">Home</a></li>
+            <li class="breadcrumb-item active">Add User</li>
+          </ol>
+        </div>
+      </div>
+    </div></section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="card card-default">
+        <div class="card-header">
+          <h3 class="card-title">Add User</h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <form action="{{ url_for('auth.add_user') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required pattern="^[a-zA-Z0-9_]{3,20}$" title="Username must be alphanumeric and 3 to 20 characters long">
+                    <small class="form-text text-muted">Username should be 3-20 characters long and contain only letters, numbers, and underscores.</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" id="first_name" placeholder="Enter first name" name="first_name" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" placeholder="Enter last name" name="last_name" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="other_name">Other Name</label>
+                    <input type="text" class="form-control" id="other_name" placeholder="Enter other name" name="other_name">
+                    <small class="form-text text-muted">Optional.</small>
+                  </div>
+
+                  <div class="form-group mb-2">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control password-field" id="password" placeholder="Enter password" name="password" required minlength="8" title="Password must be at least 8 characters long">
+                    <small class="form-text text-muted">Password must be at least 8 characters long.</small>
+                  </div>
+
+                  <div class="form-group mb-2">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" class="form-control password-field" id="confirm_password" placeholder="Repeat password to verify" name="confirm_password" required>
+                    <small class="form-text text-muted">Please confirm your password.</small>
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <div class="icheck-primary d-inline">
+                      <input type="checkbox" id="showPasswordToggle">
+                      <label for="showPasswordToggle" class="text-muted font-weight-normal small" style="cursor: pointer; user-select: none;">
+                        <i class="fas fa-eye mr-1"></i> Show Passwords
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="role">Role</label>
+                    <select class="form-control select2" name="role" id="role" style="width: 100%;" required>
+                      <option value="" selected disabled="selected">Select a Role</option>
+                      <option value="School Practice Supervisor">School Practice Supervisor</option>
+                      <option value="Dean">Dean</option>
+                      <option value="Head of Department">Head of Department</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="profile_image">Profile Image</label>
+                    <input type="file" class="form-control-file" id="profile_image" name="profile_image" accept="image/*">
+                    <small class="form-text text-muted">Upload a profile image (optional). Accepted formats: PNG, JPG, JPEG, GIF.</small>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/plugins/select2/js/select2.full.min.js"></script>
+<script src="/static/assets/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="/static/assets/plugins/moment/moment.min.js"></script>
+<script src="/static/assets/plugins/inputmask/jquery.inputmask.min.js"></script>
+<script src="/static/assets/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/static/assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
+<script src="/static/assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/static/assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+<script src="/static/assets/js/adminlte.min.js"></script>
+<script src="/static/assets/js/demo.js"></script>
+<script src="/static/assets/js/pages/dashboard.js"></script>
+<script src="/static/assets/js/mine.js"></script>
+
+<script>
+  $(function () {
+    $('.select2').select2();
+
+    // Toggle password visibility
+    $('#showPasswordToggle').on('change', function () {
+      const isChecked = $(this).is(':checked');
+      $('.password-field').attr('type', isChecked ? 'text' : 'password');
+      
+      // Optional visual icon swap inside the checkbox label
+      const icon = $(this).next('label').find('i');
+      if (isChecked) {
+        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+      } else {
+        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+      }
+    });
+
+    // Password matching validation
+    $('#confirm_password, #password').on('input', function () {
+      const password = $('#password').val();
+      const confirmPassword = $('#confirm_password').val();
+      if (password !== confirmPassword && confirmPassword.length > 0) {
+        $('#confirm_password')[0].setCustomValidity('Passwords do not match');
+      } else {
+        $('#confirm_password')[0].setCustomValidity('');
+      }
+    });
+  });
+</script>
+{% endblock javascripts %}

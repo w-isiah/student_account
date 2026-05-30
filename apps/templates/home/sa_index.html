@@ -1,0 +1,180 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}CORE PRIMARY TEACHERS COLLEGE Dashboard{% endblock %}
+
+{% block body_class %} sidebar-mini {% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    .bg-kds-gradient { background: linear-gradient(45deg, #004a99, #007bff); color: white; }
+    .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="content-wrapper">
+
+  {% if session.get('role') == 'super_admin' %}
+  
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">
+            <i class="fas fa-school mr-2 text-primary"></i>
+            CORE PRIMARY TEACHERS COLLEGE Management Console
+          </h1>
+        </div>
+
+        <div class="col-sm-6 text-right">
+          <span class="badge badge-light p-2 border">
+            <span class="status-dot bg-success"></span> SYSTEM ACTIVE
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <div class="callout callout-info bg-kds-gradient border-0 shadow-sm mb-4">
+        <h5>Welcome, Administrator {{ session.get('first_name', 'Admin') }}</h5>
+        <p class="mb-0">
+          Manage CORE PRIMARY TEACHERS COLLEGE records, academics, and administration from this hub.
+        </p>
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-primary shadow-sm">
+            <div class="inner">
+              <h3>{{ student_count or '0' }}</h3>
+              <p>Total Students</p>
+            </div>
+            <div class="icon"><i class="fas fa-user-graduate"></i></div>
+            <a href="/manage_students" class="small-box-footer">
+              View Registry <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-success shadow-sm">
+            <div class="inner">
+              <h3>{{ staff_count or '0' }}</h3>
+              <p>Faculty & Staff</p>
+            </div>
+            <div class="icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <a href="/manage_staff" class="small-box-footer">
+              Manage Staff <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-warning shadow-sm">
+            <div class="inner">
+              <h3>{{ class_count or '0' }}</h3>
+              <p>Classrooms</p>
+            </div>
+            <div class="icon"><i class="fas fa-door-open"></i></div>
+            <a href="/manage_classes" class="small-box-footer">
+              View Classes <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-6">
+          <div class="small-box bg-danger shadow-sm">
+            <div class="inner">
+              <h3>{{ asset_count or '0' }}</h3>
+              <p>School Assets</p>
+            </div>
+            <div class="icon"><i class="fas fa-warehouse"></i></div>
+            <a href="/manage_inventory" class="small-box-footer">
+              Inventory <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {% else %}
+
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">
+            Hello, {{ session.get('first_name', 'User') }}
+          </h1>
+          <p class="text-muted">
+            Welcome back to the CORE PRIMARY TEACHERS COLLEGE Portal.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="content">
+    <div class="container-fluid">
+
+      <div class="row">
+
+        <div class="col-md-4 col-sm-6">
+          <div class="info-box shadow-sm">
+            <span class="info-box-icon bg-info">
+              <i class="fas fa-book-open"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Academic Portal</span>
+              <a href="/my_academics" class="font-weight-bold">
+                View Grades & Lessons
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+          <div class="info-box shadow-sm">
+            <span class="info-box-icon bg-purple">
+              <i class="fas fa-calendar-check"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Attendance</span>
+              <a href="/attendance" class="font-weight-bold">
+                Mark/View Logs
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+          <div class="info-box shadow-sm">
+            <span class="info-box-icon bg-secondary">
+              <i class="fas fa-user-circle"></i>
+            </span>
+            <div class="info-box-content">
+              <span class="info-box-text">Profile</span>
+              <a href="/profile" class="font-weight-bold">
+                Settings
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  {% endif %}
+
+</div>
+{% endblock content %}

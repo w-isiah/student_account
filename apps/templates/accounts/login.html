@@ -1,0 +1,90 @@
+{% extends "layouts/base-fullscreen.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block body_class %}login-page{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<link rel="stylesheet" href="/static/assets/plugins/fontawesome-free/css/all.min.css">
+<link rel="stylesheet" href="/static/assets/css/adminlte.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="login-box">
+
+  <div class="login-logo">
+    <h2 style="text-align:center; font-weight:bold; color:#2c3e50;">
+      CORE PRIMARY TEACHERS COLLEGE
+    </h2>
+  </div>
+
+  <div class="card">
+    <div class="card-body login-card-body">
+
+      <p class="login-box-msg">Sign in to start your session</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span>&times;</span>
+            </button>
+          </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('authentication_blueprint.login') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="input-group mb-3">
+          <input type="text" name="username" class="form-control" 
+                 placeholder="Username" required autocomplete="username">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="password" name="password" class="form-control" 
+                 placeholder="Password" required autocomplete="current-password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block">
+              Sign In
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="mt-4 text-center text-muted">
+        <small>
+          Copy Right &copy; 2026 | Designed by 
+          <a target="_blank" rel="noopener noreferrer" href="#">
+            Stokvel Kata Co. Ltd
+          </a>
+        </small>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

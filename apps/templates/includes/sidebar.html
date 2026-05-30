@@ -1,0 +1,186 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+<!-- Brand Logo / Title -->
+<a href="{{ url_for('home_blueprint.index') }}" class="brand-link text-center">
+  <span class="brand-text font-weight-bold"
+        style="font-size:16px; display:block; text-align:center; line-height:1.4;">
+    CORE PRIMARY <br>
+    <small style="font-size:13px;">Teachers College</small>
+  </span>
+</a>
+
+  <div class="sidebar">
+
+    <!-- User Panel -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+      <div class="image">
+        {% if session.get('profile_image') %}
+        <img src="/static/uploads/{{ session['profile_image'] }}" 
+             class="img-circle elevation-2" 
+             alt="User"
+             onerror="this.src='/static/assets/img/default-user.png'">
+        {% else %}
+        <img src="/static/assets/img/default-user.png" 
+             class="img-circle elevation-2" 
+             alt="User">
+        {% endif %}
+      </div>
+
+      <div class="info">
+        <a href="{{ url_for('authentication_blueprint.edit_user_profile', id=session.get('id')) }}" 
+           class="d-block">
+          {{ session.get('first_name', 'User') }} 
+          {{ session.get('last_name', '') }}
+        </a>
+
+        <small class="text-muted">
+          <i class="fas fa-user-tag mr-1"></i>
+          {{ session.get('role', 'User')|replace('_', ' ')|title }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Sidebar Search -->
+    <div class="form-inline mb-2">
+      <div class="input-group" data-widget="sidebar-search">
+        <input class="form-control form-control-sidebar" 
+               type="search" 
+               placeholder="Search menu..." 
+               id="sidebarSearch">
+
+        <div class="input-group-append">
+          <button class="btn btn-sidebar">
+            <i class="fas fa-search fa-fw"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent"
+          data-widget="treeview"
+          role="menu"
+          data-accordion="false">
+
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="/index" 
+             class="nav-link {% if segment == 'index' %}active{% endif %}">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+
+        <!-- Registry -->
+        <li class="nav-header text-uppercase text-xs mt-2 mb-1 text-primary">
+          School Registry
+        </li>
+
+        {% if session.get('role') == 'super_admin' %}
+
+        <!-- Administration -->
+        <li class="nav-header text-uppercase text-xs mt-3 mb-1 text-danger">
+          Administration
+        </li>
+
+        <li class="nav-item">
+          <a href="/manage_affiliations" 
+             class="nav-link {% if segment == 'manage_affiliations' %}active{% endif %}">
+            <i class="nav-icon fas fa-handshake"></i>
+            <p>Affiliations</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/manage_courses" 
+             class="nav-link {% if segment == 'manage_courses' %}active{% endif %}">
+            <i class="nav-icon fas fa-book-open"></i>
+            <p>Courses</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/manage_course_units" 
+             class="nav-link {% if segment == 'manage_course_units' %}active{% endif %}">
+            <i class="nav-icon fas fa-layer-group"></i>
+            <p>Course Units</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/manage_programmes" 
+             class="nav-link {% if segment == 'manage_programmes' %}active{% endif %}">
+            <i class="nav-icon fas fa-calendar-alt"></i>
+            <p>Programmes</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/study_years" 
+             class="nav-link {% if segment == 'study_years' %}active{% endif %}">
+            <i class="nav-icon fas fa-graduation-cap"></i>
+            <p>Study Years</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{{ url_for('houses_blueprint.manage_houses') }}"
+             class="nav-link {% if segment == 'manage_houses' %}active{% endif %}">
+            <i class="nav-icon fas fa-home"></i>
+            <p>School Houses</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{{ url_for('academic_years_blueprint.manage_academic_years') }}"
+             class="nav-link {% if segment == 'manage_academic_years' %}active{% endif %}">
+            <i class="nav-icon fas fa-calendar-alt"></i>
+            <p>Academic Years</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{{ url_for('students_blueprint.manage_students') }}"
+             class="nav-link {% if segment == 'manage_students' %}active{% endif %}">
+            <i class="nav-icon fas fa-user-graduate"></i>
+            <p>Students</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/manage_users" 
+             class="nav-link {% if segment == 'manage_users' %}active{% endif %}">
+            <i class="nav-icon fas fa-users-cog"></i>
+            <p>User Access Control</p>
+          </a>
+        </li>
+
+        {% endif %}
+
+        <!-- Support -->
+        <li class="nav-header text-uppercase text-xs mt-3 mb-1 text-info">
+          Support & Settings
+        </li>
+
+        <li class="nav-item">
+          <a href="/help" 
+             class="nav-link {% if segment == 'help' %}active{% endif %}">
+            <i class="nav-icon fas fa-question-circle"></i>
+            <p>Help Center</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{{ url_for('authentication_blueprint.logout') }}" 
+             class="nav-link text-warning">
+            <i class="nav-icon fas fa-power-off"></i>
+            <p>Logout</p>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+  </div>
+</aside>
